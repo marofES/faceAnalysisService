@@ -9,3 +9,22 @@ This project provides an API service for face analysis, including face detection
 - **Face Similarity Check**: Detects faces from two different images and checks their similarity.
 - **Gender Detection**: Identifies the gender of detected faces.
 - **Emotion Detection**: Detects emotions on detected faces.
+
+## Installation
+
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/marofES/faceAnalysisService.git
+    cd faceAnalysisService
+    ```
+
+2. Set up a virtual environment and activate it:
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+    ```
+
+3. Install the required dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
