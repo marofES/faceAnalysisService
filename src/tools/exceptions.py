@@ -1,0 +1,1 @@
+# module-specific errors, module-specific exceptions, e.g. PostNotFound, InvalidUserData
