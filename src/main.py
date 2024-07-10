@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 
 import uvicorn
 from fastapi import FastAPI
-
+from sqlalchemy import text 
 from src.auth.router import router as auth_router
 from src.config import settings
 from src.database import sessionmanager
@@ -29,9 +29,16 @@ app = FastAPI(lifespan=lifespan, title=settings.project_name, docs_url="/api/doc
 async def root():
     return {"message": "Hello World"}
 
-
+@app.get("/check-db-connection")
+async def check_db_connection():
+    try:
+        async with sessionmanager.session() as session:
+            await session.execute(text("SELECT 1"))  # Use text() to declare SQL expression
+        return {"status": "Database connection successful!"}
+    except Exception as e:
+        return {"status": f"Failed to connect to database: {str(e)}"}
 # Routers
-#app.include_router(users_router)
+
 app.include_router(auth_router, prefix="/auth", tags=["Auth"])
 
 # if __name__ == "__main__":

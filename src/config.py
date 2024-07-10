@@ -18,8 +18,8 @@ class Settings(BaseSettings):
     database_url: str
     echo_sql: bool = True
     test: bool = False
-    project_name: str = "My FastAPI project"
-    oauth_token_secret: str = "my_dev_secret"
+    project_name: str = "Face Service"
+    oauth_token_secret: str = "face_service_secret"
     log_level: str = "DEBUG"
 
 

@@ -1,11 +1,12 @@
 import jwt
-from src.auth.constants import ACCESS_TOKEN_SECRET_KEY,ACCESS_TOKEN_ALGORITHM
+from src.auth.constants import ACCESS_TOKEN_SECRET_KEY, ACCESS_TOKEN_ALGORITHM
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from src.auth.models import User as UserDBModel
 from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/token")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -24,7 +25,7 @@ def is_authenticated(user, password: str) -> bool:
 def decode_jwt(token: str) -> dict:
     return jwt.decode(token, ACCESS_TOKEN_SECRET_KEY, algorithms=[ACCESS_TOKEN_ALGORITHM])
 
-async def get_user(db_session: AsyncSession, user_id: int):
+async def get_user(db_session: AsyncSession, user_id: str):
     user = (await db_session.scalars(select(UserDBModel).where(UserDBModel.id == user_id))).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")

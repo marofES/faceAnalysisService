@@ -9,11 +9,6 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
-from src.config import DATABASE_URL
-
-from sqlalchemy.orm import declarative_base
-
-Base = declarative_base()
 
 # Heavily inspired by https://praciano.com.br/fastapi-and-async-sqlalchemy-20-with-pytest-done-right.html
 
@@ -59,8 +54,13 @@ class DatabaseSessionManager:
 
 
 sessionmanager = DatabaseSessionManager(settings.database_url, {"echo": settings.echo_sql})
-
+print(f'sessionmanager: {sessionmanager}')
 
 async def get_db_session():
     async with sessionmanager.session() as session:
-        yield session
+        try:
+            yield session
+            print("Database connection successful!")
+        except Exception as e:
+            print(f"Failed to connect to database: {e}")
+            raise
