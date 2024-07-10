@@ -1,31 +1,24 @@
-# pydantic models
-from pydantic import BaseModel, EmailStr
-from typing import Optional
-from enum import Enum
+from pydantic import BaseModel, ConfigDict
 
-class RoleEnum(str, Enum):
-    admin = "admin"
-    staff = "staff"
-    n_user = "n_user"
-    guest = "guest"
+class User(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
 
-class UserBase(BaseModel):
-    username: str
-    email: EmailStr
-
-class UserCreate(UserBase):
-    password: str
-    role: Optional[RoleEnum] = RoleEnum.n_user
-
-class UserResponse(UserBase):
     id: int
-    is_active: bool
-    is_verified: bool
-    role: RoleEnum
+    username: str
+    slug: str
+    email: str
+    first_name: str
+    last_name: str
+    is_superuser: bool = False
 
-    class Config:
-        orm_mode = True
+class UserPrivate(User):
+    hashed_password: str
 
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+
+class TokenData(BaseModel):
+    email: str
+    permissions: str = "user"
