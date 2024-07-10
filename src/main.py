@@ -1,21 +1,38 @@
 from fastapi import FastAPI
-from src.auth.router import auth_router
-from src.database import engine
-from src.models import Base
+import logging
+import sys
+from contextlib import asynccontextmanager
 
-# Create the FastAPI app instance
-app = FastAPI()
+import uvicorn
+from fastapi import FastAPI
 
-# Create the database tables asynchronously
-@app.on_event("startup")
-async def startup():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+from src.auth.router import router as auth_router
+from src.config import settings
+from src.database import sessionmanager
 
-# Include the auth router
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG if settings.log_level == "DEBUG" else logging.INFO)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    Function that handles startup and shutdown events.
+    To understand more, read https://fastapi.tiangolo.com/advanced/events/
+    """
+    yield
+    if sessionmanager._engine is not None:
+        # Close the DB connection
+        await sessionmanager.close()
+
+app = FastAPI(lifespan=lifespan, title=settings.project_name, docs_url="/api/docs")
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+
+
+# Routers
+#app.include_router(users_router)
 app.include_router(auth_router, prefix="/auth", tags=["Auth"])
 
-# Example root endpoint
-@app.get("/")
-def read_root():
-    return {"message": "Hello World"}
+# if __name__ == "__main__":
+#     uvicorn.run("main:app", host="0.0.0.0", reload=True, port=8000)
