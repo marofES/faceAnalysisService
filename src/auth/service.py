@@ -1,47 +1,34 @@
-# module-specific business logic
-from datetime import datetime, timedelta
-from typing import Optional
-from jose import jwt
-from passlib.context import CryptContext
-from fastapi import HTTPException, status
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
+from typing import Annotated
 
-from src.auth.constants import SECRET_KEY, ALGORITHM
-from src.auth.models import User
+from src.auth import models
+from src.auth.config import DBSessionDep
 
+from src.auth.schemas import TokenData
 
-class AuthService:
-    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+from src.auth.dependencies import oauth2_scheme, get_user_by_email, decode_jwt
+from fastapi import Depends, HTTPException, status
+from jwt import PyJWTError
 
-    def get_password_hash(self, password):
-        return self.pwd_context.hash(password)
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db_session: DBSessionDep) -> models.User:
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = decode_jwt(token)
+        email = payload.get("sub")
+        if email is None:
+            raise credentials_exception
+        permissions = payload.get("permissions")
+        if permissions is None:
+            raise credentials_exception
+        token_data = TokenData(email=email, permissions=permissions)
+    except PyJWTError as e:
+        raise credentials_exception
+    user = await get_user_by_email(db_session, token_data.email)
+    if user is None:
+        raise credentials_exception
+    return user
 
-    def verify_password(self, plain_password, hashed_password):
-        return self.pwd_context.verify(plain_password, hashed_password)
-
-    def create_access_token(self, data: dict, expires_delta: Optional[timedelta] = None):
-        to_encode = data.copy()
-        if expires_delta:
-            expire = datetime.utcnow() + expires_delta
-        else:
-            expire = datetime.utcnow() + timedelta(minutes=15)
-        to_encode.update({"exp": expire})
-        encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-        return encoded_jwt
-
-    async def authenticate_user(self, db: AsyncSession, username: str, password: str):
-        async with db.begin() as session:
-            result = await session.execute(select(User).filter(User.username == username))
-            user = result.scalar_one_or_none()
-            if not user:
-                return False
-            if not self.verify_password(password, user.hashed_password):
-                return False
-            return user
-
-    async def get_user(self, db: AsyncSession, username: str):
-        async with db() as session:
-            result = await session.execute(select(User).filter(User.username == username))
-            return result.scalar_one_or_none()
-
+CurrentUserDep = Annotated[models.User, Depends(get_current_user)]
