@@ -2,22 +2,17 @@
 
 from sqlalchemy import Column, Integer, String, Boolean, Enum
 from enum import Enum as PyEnum
-from src.models import Base
-
-
-class Role(PyEnum):
-    admin = "admin"
-    staff = "staff"
-    n_user = "n_user"
-    guest = "guest"
+from src.database import Base
+from sqlalchemy.orm import Mapped, mapped_column
 
 class User(Base):
-    __tablename__ = "users"
+    __tablename__ = "user"
 
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True, index=True)
-    email = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
-    is_active = Column(Boolean, default=True)
-    is_verified = Column(Boolean, default=False)
-    role = Column(Enum(Role), default=Role.n_user)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, index=True)
+    username: Mapped[str] = mapped_column(index=True, unique=True)
+    slug: Mapped[str] = mapped_column(index=True, unique=True)
+    email: Mapped[str] = mapped_column(index=True, unique=True)
+    first_name: Mapped[str]
+    last_name: Mapped[str]
+    hashed_password: Mapped[str]
+    is_superuser: Mapped[bool] = mapped_column(default=False)
