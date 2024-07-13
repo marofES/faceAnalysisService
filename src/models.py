@@ -1,4 +1,3 @@
-# global database models
-from sqlalchemy.ext.declarative import declarative_base
+from src.auth.models import Base as AuthBase
 
-Base = declarative_base()
+Base = AuthBase
