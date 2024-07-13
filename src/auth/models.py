@@ -1,18 +1,16 @@
-# database models
+from sqlalchemy import Boolean, Column, Enum, String
+from sqlalchemy.ext.declarative import declarative_base
+from src.auth.constants import RoleEnum
 
-from sqlalchemy import Column, Integer, String, Boolean, Enum
-from enum import Enum as PyEnum
-from src.database import Base
-from sqlalchemy.orm import Mapped, mapped_column
+Base = declarative_base()
 
 class User(Base):
-    __tablename__ = "user"
+    __tablename__ = "users"
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, index=True)
-    username: Mapped[str] = mapped_column(index=True, unique=True)
-    slug: Mapped[str] = mapped_column(index=True, unique=True)
-    email: Mapped[str] = mapped_column(index=True, unique=True)
-    first_name: Mapped[str]
-    last_name: Mapped[str]
-    hashed_password: Mapped[str]
-    is_superuser: Mapped[bool] = mapped_column(default=False)
+    username = Column(String, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True)
+    hashed_password = Column(String)
+    first_name = Column(String)
+    role = Column(Enum(RoleEnum), default=RoleEnum.user)
+    is_active = Column(Boolean, default=True)
+    is_verified = Column(Boolean, default=False)

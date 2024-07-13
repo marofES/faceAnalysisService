@@ -1,24 +1,29 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, EmailStr
+from typing import Optional
+from src.auth.constants import RoleEnum
 
-class User(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: int
+class UserBase(BaseModel):
     username: str
-    slug: str
-    email: str
-    first_name: str
-    last_name: str
-    is_superuser: bool = False
+    email: EmailStr
+    first_name: Optional[str] = None
+    role: RoleEnum
+    is_active: bool = True
+    is_verified: bool = False
 
-class UserPrivate(User):
-    hashed_password: str
+class UserCreate(UserBase):
+    password: str
+
+class User(UserBase):
+    class Config:
+        orm_mode = True
+
+class Login(BaseModel):
+    username: str
+    password: str
 
 class Token(BaseModel):
     access_token: str
-    token_type: str
-
+    refresh_token: str
 
 class TokenData(BaseModel):
-    email: str
-    permissions: str = "user"
+    username: Optional[str] = None
