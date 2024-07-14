@@ -28,3 +28,7 @@ This project provides an API service for face analysis, including face detection
     ```bash
     pip install -r requirements.txt
     ```
+4. Run Project:
+    ```bash
+    uvicorn src.main:app --host 0.0.0.0 --port 80
+    ```
