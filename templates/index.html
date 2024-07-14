@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detect Face from Your Image</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f4f4f4;
+        }
+        
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        main {
+            margin: 20px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+        
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        label {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        label:hover {
+            background-color: #45a049;
+        }
+    </style>
+    <script>
+        async function uploadImage(event) {
+            const fileInput = document.getElementById('file-input');
+            const formData = new FormData();
+            formData.append('face_image', fileInput.files[0]);
+
+            const response = await fetch('/tools/face-detect/', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.error) {
+                alert(result.error);
+                return;
+            }
+
+            const imgElement = document.getElementById('result-image');
+            imgElement.src = `data:image/jpeg;base64,${result.base64_image}`;
+        }
+    </script>
+</head>
+
+<body>
+    <header>
+        <h1>Detect Faces from Your Image</h1>
+    </header>
+    <main>
+        <img id="result-image" src="data:image/jpeg;base64,{{ initial_base64_image }}" alt="Your image will appear here">
+        <input type="file" id="file-input" name="face_image" accept="image/*" onchange="uploadImage(event)">
+        <label for="file-input">Try</label>
+    </main>
+</body>
+
+</html>
