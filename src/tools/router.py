@@ -10,7 +10,7 @@ from model_load import UltraFaceTF
 from src.auth import schemas, service, dependencies
 from src.database import get_session
 from src.auth.constants import RoleEnum
-
+from src.tools.utils import resize_with_envelope
 import base64
 
 model_path = "D:/faceService/export_models/slim"
@@ -49,9 +49,10 @@ async def face_detect(face_image: UploadFile = File(...)):
             end_y = int(result[5] * h)
 
             cv2.rectangle(img, (start_x, start_y), (end_x, end_y), (0, 255, 0), 2)
+            resized_img = resize_with_envelope(img, (768, 1024))
 
         # Convert the processed image to base64
-        _, buffer = cv2.imencode('.jpg', img)
+        _, buffer = cv2.imencode('.jpg', resized_img)
         img_base64 = base64.b64encode(buffer).decode('utf-8')
         
         return JSONResponse(content={"face_image": face_image.filename, "base64_image": img_base64})
