@@ -79,8 +79,10 @@ async def face_detection_and_spilt(face_image: UploadFile = File(...)):
         #print(f'results: {results}')
         cropped_img_list = []
         padding = 5
+        count = 0
 
-        for i, result in enumerate(results, 1):
+
+        for i, result in enumerate(results):
             start_x, start_y, end_x, end_y = get_coordinates(result, w, h)
 
             cropped_img = crop_with_padding(img, start_x, start_y, end_x, end_y, w, h, padding)
@@ -88,12 +90,15 @@ async def face_detection_and_spilt(face_image: UploadFile = File(...)):
             cropped_image_resize = resize_with_envelope(cropped_img, (256, 256))
             cr_base_64 = image_to_base64(cropped_image_resize)
             cropped_img_list.append(cr_base_64)
+            
             cv2.rectangle(img, (start_x, start_y), (end_x, end_y), (0, 255, 0), 2)
+
+            count = count + 1
         
         resized_img = resize_with_envelope(img, (768, 1024))
 
         original_img = image_to_base64(resized_img)
         
-        return JSONResponse(content={"original_image": original_img,"total_face_count": i, "cropped_image_list": cropped_img_list})
+        return JSONResponse(content={"original_image": original_img,"total_face_count": count, "cropped_image_list": cropped_img_list})
     else:
         return {'error': 'TF model is not loading'}
