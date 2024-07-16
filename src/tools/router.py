@@ -81,6 +81,7 @@ async def face_detection_and_spilt(face_image: UploadFile = File(...)):
         padding = 5
         count = 0
 
+
         for i, result in enumerate(results):
             start_x, start_y, end_x, end_y = get_coordinates(result, w, h)
 
@@ -89,8 +90,10 @@ async def face_detection_and_spilt(face_image: UploadFile = File(...)):
             cropped_image_resize = resize_with_envelope(cropped_img, (256, 256))
             cr_base_64 = image_to_base64(cropped_image_resize)
             cropped_img_list.append(cr_base_64)
-            count = count + 1
+            
             cv2.rectangle(img, (start_x, start_y), (end_x, end_y), (0, 255, 0), 2)
+
+            count = count + 1
         
         resized_img = resize_with_envelope(img, (768, 1024))
 
