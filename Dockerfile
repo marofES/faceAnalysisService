@@ -16,8 +16,11 @@ EXPOSE 80
 # Define environment variable
 ENV PYTHONUNBUFFERED=1
 
-# Install necessary libraries for OpenCV or other dependencies
-RUN apt-get update && apt-get install -y libgl1-mesa-glx
+# Install necessary system libraries
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libgthread-2.0-0
 
 # Run the application
 CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "80"]
