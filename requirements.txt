@@ -1,6 +1,7 @@
 tensorflow==2.15.0
 keras==2.15.0
 opencv-python==4.9.0.80
+opencv-python-headless
 alembic==1.11.1
 Authlib==1.2.0
 fastapi==0.103.2
