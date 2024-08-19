@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HalaIo - Detect Face API Documentation</title>
+    <link rel="stylesheet" href="/static/docs_style.css">
+</head>
+
+<body>
+    <header>
+        <h1>Face API Documentation</h1>
+        <div>
+            <a href="http://127.0.0.1/" class="docs-link">Home</a>
+        </div>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="#intro">Introduction</a></li>
+            <li><a href="#fds">Face Detect and Split</a></li>
+            <li><a href="#endpoints">Endpoints</a></li>
+        </ul>
+    </nav>
+    <main>
+        <section id="intro">
+            <h2>Introduction</h2>
+            <p>Welcome to the API documentation. This page provides an overview of the available API endpoints and how to use them.</p>
+        </section>
+        <section id="fds">
+            <h2>Face Detection and Cropping</h2>
+            <p>This API endpoint allows you to detect and crop faces from a provided image. The input image must be in JPEG format and should have a minimum width and height of 200 pixels. The response will include the number of detected faces and their
+                corresponding cropped images encoded in base64 format.</p>
+        </section>
+
+        <section id="endpoints">
+            <h2>API Endpoints</h2>
+
+            <div class="endpoint">
+                <h3>POST /tools/face-detection-and-split/</h3>
+                <p>Detect faces within the provided image and return the cropped faces and original inage with face detect.</p>
+                <pre>
+                    <code>
+curl -X 'POST' \
+    'http://127.0.0.1/tools/face-detection-and-split/' \
+    -H 'accept: application/json' \
+    -H 'Content-Type: multipart/form-data' \
+    -F 'face_image=@1.jpg;type=image/jpeg'
+                    </code>
+                    
+                </pre>
+                <p>Response:</p>
+                <pre>
+                    <code>
+{
+    "original_image": "/9j/4AAQSkZJRgABAQAASABIAAD...",
+    "total_face_count": 3,
+    "cropped_image_list": [
+        "/9j/4AAQSkZJRgABAQAASABIAAD...",
+        "/9j/4AAQSkZJRgABAQAASABIAAD...",
+        "/9j/4AAQSkZJRgABAQAASABIAAD..."
+    ]
+}
+                    </code>
+                </pre>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>
