@@ -29,8 +29,8 @@ app.include_router(auth_router, prefix="/auth", tags=["auth"])
 app.include_router(tools_router, prefix="/tools", tags=["tools"])
 
 # Mount the static directory to serve CSS and other static files
-app.mount("/static", StaticFiles(directory="D:/faceService/static"), name="static")
-templates = Jinja2Templates(directory="D:/faceService/templates")
+app.mount("/static", StaticFiles(directory="/static"), name="static")
+templates = Jinja2Templates(directory="/templates")
 
 @app.on_event("startup")
 async def startup():
