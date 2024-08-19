@@ -4,62 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detect Face from Your Image</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-color: #f4f4f4;
-        }
-        
-        header {
-            background-color: #4CAF50;
-            color: white;
-            padding: 20px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        
-        main {
-            margin: 20px;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 600px;
-            text-align: center;
-        }
-        
-        img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-        
-        input[type="file"] {
-            display: none;
-        }
-        
-        label {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        
-        label:hover {
-            background-color: #45a049;
-        }
-    </style>
+    <title>HalaIo - Detect Face</title>
+    <link rel="stylesheet" href="/static/style.css">
     <script>
         async function uploadImage(event) {
             const fileInput = document.getElementById('file-input');
@@ -86,7 +32,13 @@
 
 <body>
     <header>
-        <h1>Detect Faces from Your Image</h1>
+        <div>
+            <h1>Detect Faces from Your Image</h1>
+        </div>
+        <div>
+            <a href="http://127.0.0.1/face-docs/" class="docs-link">Docs</a>
+        </div>
+
     </header>
     <main>
         <img id="result-image" src="data:image/jpeg;base64,{{ initial_base64_image }}" alt="Your image will appear here">
