@@ -13,7 +13,7 @@ from src.auth.constants import RoleEnum
 from src.tools.utils import *
 import base64
 
-model_path = "D:/faceService/export_models/slim"
+model_path = "export_models/slim"
 #model = tf.keras.models.load_model(model_path)
 model_loading = UltraFaceTF.tf_model_load(model_path)
 
