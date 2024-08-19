@@ -2,6 +2,9 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+
+from pathlib import Path
 
 import json
 import base64
@@ -25,6 +28,8 @@ app.add_middleware(
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
 app.include_router(tools_router, prefix="/tools", tags=["tools"])
 
+# Mount the static directory to serve CSS and other static files
+app.mount("/static", StaticFiles(directory="D:/faceService/static"), name="static")
 templates = Jinja2Templates(directory="D:/faceService/templates")
 
 @app.on_event("startup")
@@ -41,3 +46,7 @@ async def read_root(request: Request):
         initial_base64_image = data.get("face_detect", "")
 
     return templates.TemplateResponse("index.html", {"request": request, "initial_base64_image": initial_base64_image})
+
+@app.get("/face-docs/", response_class=HTMLResponse)
+async def custom_docs(request: Request):
+    return templates.TemplateResponse("docs.html", {"request": request})
