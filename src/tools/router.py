@@ -7,9 +7,9 @@ import numpy as np
 import cv2
 from model_load import UltraFaceTF
 
-from src.auth import schemas, service, dependencies
-from src.database import get_session
-from src.auth.constants import RoleEnum
+# from src.auth import schemas, service, dependencies
+# from src.database import get_session
+# from src.auth.constants import RoleEnum
 from src.tools.utils import *
 import base64
 
