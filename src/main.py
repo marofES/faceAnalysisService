@@ -41,7 +41,7 @@ async def startup():
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     # Load the initial base64 image from face_def.json
-    with open("D:/faceService/src/face_image_default.json", "r") as file: #checking
+    with open("faceService/src/face_image_default.json", "r") as file: #checking
         data = json.load(file)
         initial_base64_image = data.get("face_detect", "")
 
