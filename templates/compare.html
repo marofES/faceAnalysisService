@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Similarity Checker</title>
+    <link rel="stylesheet" href="/static/docs_style.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        h2 {
+            margin-bottom: 30px;
+            font-size: 24px;
+            color: #333;
+        }
+        
+        .image-upload {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        
+        .image-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f7f7f7;
+        }
+        
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .upload-btn-wrapper {
+            margin-top: 15px;
+            display: inline-block;
+        }
+        
+        .upload-btn {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .upload-btn:hover {
+            background-color: #45a049;
+        }
+        
+        .upload-btn-wrapper input[type=file] {
+            display: none;
+        }
+        
+        #checkSimilarityBtn {
+            margin-top: 20px;
+            padding: 12px 20px;
+            font-size: 18px;
+        }
+        
+        .result-container {
+            margin-top: 30px;
+            font-size: 18px;
+        }
+        
+        .result-container p {
+            margin: 0;
+        }
+        
+        .similarity-score {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .conclusion {
+            margin-top: 10px;
+            font-size: 18px;
+            color: #777;
+        }
+        
+        .try-again {
+            margin-top: 30px;
+        }
+        
+        .try-again button {
+            background-color: #FF6F61;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .try-again button:hover {
+            background-color: #e65b50;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <header>
+            <h1>HalaIO Face Analysis</h1>
+            <div>
+                <a href="/" class="docs-link">Home</a>
+            </div>
+        </header>
+
+    </header>
+    <div class="container">
+        <h2>Face Similarity Checker</h2>
+
+        <div class="image-upload">
+            <div>
+                <div class="image-container" id="imageContainer1">
+                    <img id="face1" src="" alt="Face 1" style="display: none;">
+                </div>
+                <div class="upload-btn-wrapper">
+                    <button class="upload-btn" id="uploadBtn1">Upload Face 1</button>
+                    <input type="file" id="uploadFace1" accept="image/*" />
+                </div>
+            </div>
+            <div>
+                <div class="image-container" id="imageContainer2">
+                    <img id="face2" src="" alt="Face 2" style="display: none;">
+                </div>
+                <div class="upload-btn-wrapper">
+                    <button class="upload-btn" id="uploadBtn2">Upload Face 2</button>
+                    <input type="file" id="uploadFace2" accept="image/*" />
+                </div>
+            </div>
+        </div>
+
+        <button id="checkSimilarityBtn" class="upload-btn">Check Similarity</button>
+
+        <div class="result-container">
+            <p class="similarity-score" id="similarityResult"></p>
+            <p class="conclusion" id="conclusionResult"></p>
+        </div>
+
+        <div class="try-again">
+            <button id="tryAgainBtn">Try Again</button>
+        </div>
+    </div>
+
+    <script>
+        let face1, face2;
+
+        // Trigger file input when upload button is clicked
+        document.getElementById('uploadBtn1').addEventListener('click', function() {
+            document.getElementById('uploadFace1').click();
+        });
+
+        document.getElementById('uploadBtn2').addEventListener('click', function() {
+            document.getElementById('uploadFace2').click();
+        });
+
+        // Display uploaded image previews
+        document.getElementById('uploadFace1').addEventListener('change', function(event) {
+            face1 = event.target.files[0];
+            if (face1) {
+                const image1 = document.getElementById('face1');
+                image1.src = URL.createObjectURL(face1);
+                image1.style.display = 'block';
+            }
+        });
+
+        document.getElementById('uploadFace2').addEventListener('change', function(event) {
+            face2 = event.target.files[0];
+            if (face2) {
+                const image2 = document.getElementById('face2');
+                image2.src = URL.createObjectURL(face2);
+                image2.style.display = 'block';
+            }
+        });
+
+        // Send data to backend and display the result
+        document.getElementById('checkSimilarityBtn').addEventListener('click', async function() {
+            const similarityResult = document.getElementById('similarityResult');
+            const conclusionResult = document.getElementById('conclusionResult');
+
+            similarityResult.textContent = '';
+            conclusionResult.textContent = '';
+
+            if (!face1 || !face2) {
+                similarityResult.textContent = 'Please upload both images!';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('face_image_1', face1);
+            formData.append('face_image_2', face2);
+
+            try {
+                const response = await fetch('/tools/face-verify/', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    similarityResult.textContent = `Similarity: ${(data.sim * 100).toFixed(2)}%`;
+                    conclusionResult.textContent = data.msg;
+                } else {
+                    similarityResult.textContent = data.error;
+                }
+            } catch (error) {
+                similarityResult.textContent = 'An error occurred while checking similarity.';
+            }
+        });
+
+        // Clear the form and results
+        document.getElementById('tryAgainBtn').addEventListener('click', function() {
+            face1 = face2 = null;
+            document.getElementById('face1').style.display = 'none';
+            document.getElementById('face2').style.display = 'none';
+            document.getElementById('similarityResult').textContent = '';
+            document.getElementById('conclusionResult').textContent = '';
+        });
+    </script>
+</body>
+
+</html>

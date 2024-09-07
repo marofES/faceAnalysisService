@@ -1,5 +1,6 @@
 tensorflow==2.15.0
 keras==2.15.0
+onnxruntime
 opencv-python==4.9.0.80
 
 alembic==1.11.1
@@ -38,4 +39,5 @@ types-requests==2.31.0.7
 pytest-asyncio==0.21.1
 python-jose==3.3.0
 
+scikit-image
 
